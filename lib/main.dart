@@ -1,3 +1,4 @@
+import 'package:expense_tracker/widgets/chart.dart';
 import 'package:intl/intl.dart';
 
 import '../widgets/new_transaction.dart';
@@ -40,24 +41,39 @@ class _MyHomePageState extends State<MyHomePage> {
     //     id: 't2', title: 'Groceries', amount: 15.25, date: DateTime.now()),
   ];
 
-  void _addNewTransaction(String txTitle, double txAmount) {
+  List<Transaction> get _recentTransactions {
+    return _userTransactions.where((tx) {
+      // True if last week else false
+      return tx.date.isAfter(DateTime.now().subtract(
+        const Duration(days: 7),
+      ));
+    }).toList();
+  }
+
+  void _addNewTransaction(String txTitle, double txAmount, DateTime txDate) {
     final newTransac = Transaction(
         id: DateTime.now().toString(),
         title: toBeginningOfSentenceCase(txTitle).toString(),
         amount: txAmount,
-        date: DateTime.now());
+        date: txDate);
 
     setState(() {
       _userTransactions.add(newTransac);
     });
   }
 
-  void bringtransacSheet(BuildContext ctx) {
+  void _bringtransacSheet(BuildContext ctx) {
     showModalBottomSheet(
         context: ctx,
         builder: (_) {
           return NewTransaction(_addNewTransaction);
         });
+  }
+
+  void _deleteTransaction(String id) {
+    setState(() {
+      _userTransactions.removeWhere((element) => element.id == id);
+    });
   }
 
   @override
@@ -68,33 +84,25 @@ class _MyHomePageState extends State<MyHomePage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
-            onPressed: () => bringtransacSheet(context),
+            onPressed: () => _bringtransacSheet(context),
           )
         ],
       ),
       body: SingleChildScrollView(
-        child:
-            Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          const SizedBox(
-            child: Card(
-              child: Text(
-                "CHART",
-                style: TextStyle(color: Colors.greenAccent),
-              ),
-              elevation: 5,
-              color: Colors.deepPurple,
-            ),
-            width: double.infinity,
-          ),
-          TransactionList(_userTransactions)
-        ]),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Chart(_recentTransactions),
+            TransactionList(_userTransactions, _deleteTransaction),
+          ],
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
         child: const Icon(
           Icons.add,
         ),
-        onPressed: () => bringtransacSheet(context),
+        onPressed: () => _bringtransacSheet(context),
       ),
     );
   }
