@@ -9,34 +9,37 @@ class TransactionList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-        height: 400,
+        height: MediaQuery.of(context).size.height * 0.6,
         child: transactions.isEmpty
-            ? Column(
-                children: [
-                  const Text(
-                    'No transactions added yet!!!',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
+            ? LayoutBuilder(builder: (context, constraints) {
+                return Column(
+                  children: [
+                    const Text(
+                      'No transactions added yet!!!',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  SizedBox(
-                    child: Image.asset(
-                      './assets/images/waiting.png',
-                      fit: BoxFit.cover,
+                    const SizedBox(
+                      height: 10,
                     ),
-                    height: 300,
-                  ),
-                ],
-              )
+                    SizedBox(
+                      child: Image.asset(
+                        './assets/images/waiting.png',
+                        fit: BoxFit.cover,
+                      ),
+                      height: constraints.maxHeight * 0.7,
+                    ),
+                  ],
+                );
+              })
             : ListView.builder(
                 itemCount: transactions.length,
                 itemBuilder: (ctx, index) {
                   return Card(
-                    margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
+                    margin:
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
                     elevation: 5,
                     child: ListTile(
                       leading: CircleAvatar(

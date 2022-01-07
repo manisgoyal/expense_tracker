@@ -57,54 +57,62 @@ class _NewTransactionState extends State<NewTransaction> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Container(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            TextField(
+    return SingleChildScrollView(
+      child: Card(
+        child: Container(
+          padding: EdgeInsets.only(
+            top: 10,
+            left: 10,
+            right: 10,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 10,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                  autocorrect: false,
+                  decoration: const InputDecoration(labelText: "Title"),
+                  controller: titleController,
+                  onSubmitted: (_) => _dataSubmit()),
+              TextField(
                 autocorrect: false,
-                decoration: const InputDecoration(labelText: "Title"),
-                controller: titleController,
-                onSubmitted: (_) => _dataSubmit()),
-            TextField(
-              autocorrect: false,
-              decoration: const InputDecoration(labelText: "Amount"),
-              controller: amtController,
-              keyboardType: TextInputType.number,
-              onSubmitted: (_) => _dataSubmit(),
-            ),
-            Container(
-              margin: const EdgeInsets.only(
-                top: 20,
+                decoration: const InputDecoration(labelText: "Amount"),
+                controller: amtController,
+                keyboardType: TextInputType.number,
+                onSubmitted: (_) => _dataSubmit(),
               ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      (_selectedDate == DateTime(1000))
-                          ? 'No date Chosen'
-                          : 'Picked Date: ${DateFormat.yMMMd().format(_selectedDate)}',
+              Container(
+                margin: const EdgeInsets.only(
+                  top: 20,
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        (_selectedDate == DateTime(1000))
+                            ? 'No date Chosen'
+                            : 'Picked Date: ${DateFormat.yMMMd().format(_selectedDate)}',
+                      ),
                     ),
-                  ),
-                  IconButton(
-                    onPressed: _showDatePicker,
-                    icon: const Icon(Icons.calendar_today),
-                  ),
-                ],
+                    IconButton(
+                      onPressed: _showDatePicker,
+                      icon: const Icon(Icons.calendar_today),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            ElevatedButton(
-                onPressed: _dataSubmit,
-                child: const Text(
-                  'Add Transaction',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ))
-          ],
+              ElevatedButton(
+                  onPressed: _dataSubmit,
+                  child: const Text(
+                    'Add Transaction',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ))
+            ],
+          ),
         ),
       ),
     );
