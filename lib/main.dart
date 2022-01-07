@@ -88,8 +88,8 @@ class MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final isLandscape =
-        MediaQuery.of(context).orientation == Orientation.landscape;
+    final mediaQuery = MediaQuery.of(context);
+    final isLandscape = mediaQuery.orientation == Orientation.landscape;
     final appBar = AppBar(
       title: const Text('Expenses Tracker'),
       actions: [
@@ -101,9 +101,9 @@ class MyHomePageState extends State<MyHomePage> {
     );
     final transactionWidget = SizedBox(
       child: TransactionList(_userTransactions, _deleteTransaction),
-      height: (MediaQuery.of(context).size.height -
+      height: (mediaQuery.size.height -
               appBar.preferredSize.height -
-              MediaQuery.of(context).padding.top) *
+              mediaQuery.padding.top) *
           0.7,
     );
     return Scaffold(
@@ -130,18 +130,18 @@ class MyHomePageState extends State<MyHomePage> {
               _showChart
                   ? SizedBox(
                       child: Chart(_recentTransactions),
-                      height: (MediaQuery.of(context).size.height -
+                      height: (mediaQuery.size.height -
                               appBar.preferredSize.height -
-                              MediaQuery.of(context).padding.top) *
+                              mediaQuery.padding.top) *
                           0.8,
                     )
                   : transactionWidget,
             if (!isLandscape)
               SizedBox(
                 child: Chart(_recentTransactions),
-                height: (MediaQuery.of(context).size.height -
+                height: (mediaQuery.size.height -
                         appBar.preferredSize.height -
-                        MediaQuery.of(context).padding.top) *
+                        mediaQuery.padding.top) *
                     0.3,
               ),
             if (!isLandscape) transactionWidget,
