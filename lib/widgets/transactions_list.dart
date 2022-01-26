@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import '../models/transactions.dart';
-import 'package:intl/intl.dart ';
+import 'transaction_item.dart';
 
 class TransactionList extends StatelessWidget {
-  late List<Transaction> transactions;
+  final List<Transaction> transactions;
   final Function(String txId) deleteTransaction;
-  TransactionList(this.transactions, this.deleteTransaction);
+  const TransactionList(this.transactions, this.deleteTransaction);
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -34,61 +34,13 @@ class TransactionList extends StatelessWidget {
                   ],
                 );
               })
-            : ListView.builder(
-                itemCount: transactions.length,
-                itemBuilder: (ctx, index) {
-                  return Card(
-                    margin:
-                        const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
-                    elevation: 5,
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: FittedBox(
-                            child: Text(
-                              '\$${double.parse(transactions[index].amount.toStringAsFixed(2))}',
-                            ),
-                          ),
-                        ),
-                        radius: 30,
-                      ),
-                      title: Text(
-                        transactions[index].title,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          fontFamily: "OpenSans",
-                        ),
-                      ),
-                      subtitle: Text(
-                        DateFormat.yMMMd().format(transactions[index].date),
-                      ),
-                      trailing: MediaQuery.of(context).size.width > 500
-                          ? TextButton.icon(
-                              label: Text('Delete'),
-                              style: ButtonStyle(
-                                foregroundColor: MaterialStateProperty.all(
-                                  Theme.of(context).errorColor,
-                                ),
-                              ),
-                              icon: Icon(
-                                Icons.delete,
-                              ),
-                              onPressed: () =>
-                                  deleteTransaction(transactions[index].id),
-                            )
-                          : IconButton(
-                              icon: Icon(
-                                Icons.delete,
-                                color: Theme.of(context).errorColor,
-                              ),
-                              onPressed: () =>
-                                  deleteTransaction(transactions[index].id),
-                            ),
-                    ),
-                  );
-                },
-              ));
+            : ListView(
+                children: transactions.map((transac) {
+                return TransactionItem(
+                  key: ValueKey(transac.id),
+                  transaction: transac,
+                  deleteTransaction: deleteTransaction,
+                );
+              }).toList()));
   }
 }

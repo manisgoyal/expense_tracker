@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 
 class Chart extends StatelessWidget {
   final List<Transaction> transactions;
-  Chart(this.transactions);
+  const Chart(this.transactions);
   List<Map<String, Object>> get groupedTransactionValues {
     return List.generate(7, (index) {
       var totalSum = 0.0;
@@ -33,7 +33,7 @@ class Chart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: MediaQuery.of(context).size.height * 0.25,
       child: Card(
         elevation: 6,

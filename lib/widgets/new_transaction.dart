@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 
 class NewTransaction extends StatefulWidget {
   final Function(String, double, DateTime) transactionHandler;
-  NewTransaction(this.transactionHandler);
+  const NewTransaction(this.transactionHandler);
 
   @override
   State<NewTransaction> createState() => _NewTransactionState();
@@ -53,6 +53,24 @@ class _NewTransactionState extends State<NewTransaction> {
         _selectedDate = dateSelected;
       });
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    print("initState() called");
+  }
+
+  @override
+  void didUpdateWidget(covariant NewTransaction oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    print("didUpdateWidget() called");
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    print("dispose() called");
   }
 
   @override

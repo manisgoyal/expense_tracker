@@ -1,5 +1,3 @@
-import 'package:flutter/services.dart';
-
 import '../widgets/chart.dart';
 import 'package:intl/intl.dart';
 
@@ -42,7 +40,7 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => MyHomePageState();
 }
 
-class MyHomePageState extends State<MyHomePage> {
+class MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   final List<Transaction> _userTransactions = [
     // Transaction(
     //     id: 't1', title: 'New Shoes', amount: 69.99, date: DateTime.now()),
@@ -50,6 +48,23 @@ class MyHomePageState extends State<MyHomePage> {
     //     id: 't2', title: 'Groceries', amount: 15.25, date: DateTime.now()),
   ];
   bool _showChart = false;
+  @override
+  void initState() {
+    WidgetsBinding.instance?.addObserver(this);
+    super.initState();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print(state);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    WidgetsBinding.instance?.removeObserver(this);
+  }
+
   List<Transaction> get _recentTransactions {
     return _userTransactions.where((tx) {
       // True if last week else false
@@ -86,6 +101,32 @@ class MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  Widget _buildLandscapeContent() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text('Show Chart'),
+        Switch(
+            value: _showChart,
+            onChanged: (val) {
+              setState(() {
+                _showChart = val;
+              });
+            })
+      ],
+    );
+  }
+
+  Widget _buildPotraitContent(MediaQueryData mediaQuery, AppBar appBar) {
+    return SizedBox(
+      child: Chart(_recentTransactions),
+      height: (mediaQuery.size.height -
+              appBar.preferredSize.height -
+              mediaQuery.padding.top) *
+          0.3,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
@@ -108,44 +149,26 @@ class MyHomePageState extends State<MyHomePage> {
     );
     return Scaffold(
       appBar: appBar,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            if (isLandscape)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text('Show Chart'),
-                  Switch(
-                      value: _showChart,
-                      onChanged: (val) {
-                        setState(() {
-                          _showChart = val;
-                        });
-                      })
-                ],
-              ),
-            if (isLandscape)
-              _showChart
-                  ? SizedBox(
-                      child: Chart(_recentTransactions),
-                      height: (mediaQuery.size.height -
-                              appBar.preferredSize.height -
-                              mediaQuery.padding.top) *
-                          0.8,
-                    )
-                  : transactionWidget,
-            if (!isLandscape)
-              SizedBox(
-                child: Chart(_recentTransactions),
-                height: (mediaQuery.size.height -
-                        appBar.preferredSize.height -
-                        mediaQuery.padding.top) *
-                    0.3,
-              ),
-            if (!isLandscape) transactionWidget,
-          ],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (isLandscape) _buildLandscapeContent(),
+              if (isLandscape)
+                _showChart
+                    ? SizedBox(
+                        child: Chart(_recentTransactions),
+                        height: (mediaQuery.size.height -
+                                appBar.preferredSize.height -
+                                mediaQuery.padding.top) *
+                            0.8,
+                      )
+                    : transactionWidget,
+              if (!isLandscape) _buildPotraitContent(mediaQuery, appBar),
+              if (!isLandscape) transactionWidget,
+            ],
+          ),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
